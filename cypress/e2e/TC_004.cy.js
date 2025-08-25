@@ -9,8 +9,14 @@ describe('OrangeHRM - Negative Test Case', () => {
     // Step 3: Input password Salah
     cy.get('input[name="password"]').type('adasaja');
 
+    // Intercept request login
+    cy.intercept('GET', 'https://opensource-demo.orangehrmlive.com/web/index.php/core/i18n/messages').as('loginFailed');
+
     // Step 4: Klik tombol login
     cy.get('button[type="submit"]').click();
+
+    // Tunggu request login selesai
+    cy.wait('@loginFailed');
 
     // Assertion: validasi pesan error muncul
     cy.get('.oxd-alert-content')

@@ -9,8 +9,14 @@ describe('OrangeHRM - Negative Test Case', () => {
     // Step 3: Input password valid
     cy.get('input[name="password"]').type('admin123');
 
+    // Intercept request login
+    cy.intercept('GET', 'https://opensource-demo.orangehrmlive.com/web/index.php/api/v2/dashboard/employees/action-summary').as('loginRequest');
+    
     // Step 4: Klik tombol login
     cy.get('button[type="submit"]').click();
+
+    // Tunggu request login selesai
+    cy.wait('@loginRequest');
 
     // Assertion: pastikan diarahkan ke dashboard
     cy.url().should('include', '/dashboard');
