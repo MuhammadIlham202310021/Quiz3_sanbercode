@@ -1,28 +1,28 @@
+import LoginPage from "../pageObjects/LoginPage";
+
 describe('OrangeHRM - Negative Test Case', () => {
   it('Login dengan mengisi password yang benar tanpa mengisi username', () => {
     // Step 1: Buka halaman login
-    cy.visit('https://opensource-demo.orangehrmlive.com/');
+    LoginPage.visit();
 
     // Step 2: Tidak Input username
-    cy.get('input[name="username"]').should('have.value', '')
+    LoginPage.UsernameEmpty();
 
     // Step 3: Input password Benar
-    cy.get('input[name="password"]').type('admin123');
+    LoginPage.enterPassword('admin123')
 
     // Intercept request login
     cy.intercept('POST', 'https://opensource-demo.orangehrmlive.com/web/index.php/auth/validate').as('Required');
 
     // Step 4: Klik tombol login
-    cy.get('button[type="submit"]').click();
+    LoginPage.clickLogin();
 
     cy.wait(500);
 
     // Tunggu request login selesai
     cy.get('@Required.all').should('have.length', 0);
 
-    // Assertion: validasi pesan error muncul
-    cy.get('.oxd-input-field-error-message ')
-        .should('be.visible')
-        .and('contain', 'Required');
+    // Assertion: validasi pesan Required muncul
+    LoginPage.assertRequiredMessage("Required")
   });
 });
